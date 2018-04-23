@@ -10,6 +10,8 @@ public class SandLab
   public static final int SAND = 2;
   public static final int WATER = 3;
   public static final int GAS = 4;
+  public static final int FIRE = 5;
+  public static final int VINE = 6;
  
 
   //do not add any more fields below
@@ -27,17 +29,26 @@ public class SandLab
     String[] names;
     // Change this value to add more buttons
     //Step 4,6
-    names = new String[5];
+    names = new String[7];
     // Each value needs a name for the button
     names[EMPTY] = "Empty";
     names[METAL] = "Metal";
     names[SAND] = "Sand";
     names[WATER] = "Water";
     names[GAS] = "Gas";
+    names[FIRE] = "Fire";
+    names[VINE] = "Vine";
     
+ 
     //1. Add code to initialize the data member grid with same dimensions
     grid = new int[numRows][numCols];
-    
+    for(int i = 0; i < numRows; i++)
+    {
+    		for(int j = 0; j < numCols; j++)
+    		{
+    			grid[i][j] = VINE;
+   		}
+    }
     display = new SandDisplay("Falling Sand", numRows, numCols, names);
   }
   
@@ -54,6 +65,8 @@ public class SandLab
 	  Color sand = new Color(235, 194, 136);
 	  Color water = new Color(44, 148, 178);
 	  Color gas = new Color(22, 206, 56);
+	  Color fire = new Color(229, 64, 0);
+	  Color vine = new Color(45, 102, 25);
       //Step 3
    //Hint - use a nested for loop
     for(int row = 0; row < grid.length; row++)
@@ -80,6 +93,14 @@ public class SandLab
     			{
     				display.setColor(row, col, gas);
     			}
+    			if(grid[row][col] == FIRE)
+    			{
+    				display.setColor(row, col, fire);
+    			}
+    			if(grid[row][col] == VINE)
+    			{
+    				display.setColor(row, col, vine);
+    			}
     		}
     }
   }
@@ -98,6 +119,8 @@ public class SandLab
 	  int randRow = (int) (Math.random() * (grid.length - 1));
 	  int randCol = (int) (Math.random() * (grid[0].length - 1));
 	  int randSide = (int) (Math.random() * 3);
+	  int randDirect = (int) (Math.random() * 4);
+	  int randVin = (int) (Math.random() * 95);
     
 	  if( ( randRow + 1 < grid.length) && grid[randRow][randCol] == SAND && (grid[randRow + 1][randCol] == EMPTY || grid[randRow + 1][randCol] == WATER))
     		{	
@@ -134,7 +157,7 @@ public class SandLab
 	  
 	  if(grid[randRow][randCol] == GAS && randCol - 1 >= 0 && randRow - 1 >= 0)
 	  {
-		  if(randSide == 1 && grid[randRow - 1][randCol] == EMPTY)
+		  if(randSide == 1 && (grid[randRow - 1][randCol] == EMPTY || grid[randRow -1][randCol] == WATER))
 		  {
 			  grid[randRow][randCol] = EMPTY;
 			  grid[randRow - 1][randCol] = GAS;
@@ -149,6 +172,62 @@ public class SandLab
 			  grid[randRow][randCol] = EMPTY;
 			  grid[randRow][randCol + 1] = GAS;
 		  }
+	  }
+	  
+	  if(grid[randRow][randCol] == FIRE && randCol - 1 >= 0 && randRow - 1 >= 0)
+	  {
+		  if(randDirect == 1)
+		  {
+			  grid[randRow][randCol] = EMPTY;
+		  }
+		  else if (randDirect == 2)
+		  {
+			  grid[randRow - 1][randCol - 1] = FIRE;
+			  grid[randRow][randCol] = EMPTY;
+		  }
+		  else if (randDirect == 3)
+		  {
+			  grid[randRow - 1][randCol + 1] = FIRE;
+			  grid[randRow][randCol] = EMPTY;
+		  }
+		  
+		 if(grid[randRow + 1][randCol] == VINE)
+		  {
+			  grid[randRow + 1][randCol] = FIRE;
+		  }
+		 if(grid[randRow - 1][randCol] == VINE)
+		  {
+			  grid[randRow - 1][randCol] = FIRE;
+		  }
+		 if(grid[randRow][randCol + 1] == VINE)
+		  {
+			  grid[randRow][randCol + 1] = FIRE;
+		  }
+		 if(grid[randRow][randCol - 1] == VINE)
+		  {
+			  grid[randRow][randCol - 1] = FIRE;
+		  }
+	  }
+	  
+	  if(grid[randRow][randCol] == VINE && randCol - 1 >= 0 && randRow - 1 >= 0)
+	  {
+		  if(grid[randRow + 1][randCol] == EMPTY)
+		  {
+			  if(randVin == 1)
+			  {
+				  grid[randRow + 1][randCol] = VINE;
+			  }
+		  }
+		  else if(grid[randRow + 1][randCol] == WATER)
+		  {
+			  if(randVin >= 90)
+			  {
+				  grid[randRow + 1][randCol] = VINE;
+				  grid[randRow][randCol + 1] = VINE;
+				  grid[randRow][randCol - 1] = VINE;
+			  }
+		  }
+		  
 	  }
    
   }
